@@ -17,7 +17,11 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v6
-
+      - name: Ensure Pages project exists
+        run: |
+          if ! npx wrangler pages project list --json | jq -e '.[] | select(.name=="simple-page")' >/dev/null; then
+            npx wrangler pages project create simple-page --production-branch main
+          fi
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v4
         with:
